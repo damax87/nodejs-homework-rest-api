@@ -10,4 +10,6 @@ const {validateBody} = require("../../decorators");
 
 router.post('/register', validateBody(schemas.registerSchema), authController.register);
 
+router.post('/login', validateBody(schemas.loginSchema), authController.login);
+
 module.exports = router;
