@@ -17,12 +17,12 @@ const userSchema = new Schema({
         required: [true, 'Password is required'],
       },
       
-      subscription: {
+    subscription: {
         type: String,
         enum: ["starter", "pro", "business"],
         default: "starter"
       },
-      token: {
+    token: {
         type: String,
         default: null,
       },
