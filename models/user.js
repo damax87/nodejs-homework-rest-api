@@ -1,5 +1,4 @@
 const {Schema, model} = require("mongoose");
-const Joi = require("joi");
 const {handleMongooseError} = require("../helpers");
 
 // eslint-disable-next-line no-useless-escape
@@ -30,26 +29,8 @@ const userSchema = new Schema({
 
 userSchema.post("save", handleMongooseError);
 
-const registerSchema = Joi.object({
-    email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().required(),
-    subscription: Joi.string(),
-    token: Joi.string(),
-})
-
-const loginSchema = Joi.object({
-    email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().required(),
-})
-
-const schemas = {
-    registerSchema,
-    loginSchema,
-  }
-
   const User = model("user", userSchema);
 
   module.exports = {
     User,
-    schemas,
   }
