@@ -11,6 +11,7 @@ const userSchema = new Schema({
         unique: true,
         match: emailRegexp,
       },
+
     password: {
         type: String,
         required: [true, 'Password is required'],
@@ -21,10 +22,16 @@ const userSchema = new Schema({
         enum: ["starter", "pro", "business"],
         default: "starter"
       },
+      
     token: {
         type: String,
         default: null,
       },
+
+      avatarURL: {
+        type: String,
+        required: true,
+      }
 }, {versionKey: false, timestamps: true});
 
 userSchema.post("save", handleMongooseError);
