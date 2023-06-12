@@ -10,6 +10,10 @@ const {validateBody, authenticate, upload} = require("../../middleware");
 
 router.post('/register', validateBody(schemas.registerSchema), authController.register);
 
+router.get('/verify/:verificationToken', authController.verifyEmail);
+
+router.post('/verify', validateBody(schemas.verifyEmailSchema), authController.resendVerifyEmail);
+
 router.post('/login', validateBody(schemas.loginSchema), authController.login);
 
 router.get('/current', authenticate, authController.getCurrent);
