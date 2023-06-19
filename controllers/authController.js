@@ -7,12 +7,13 @@ const jimp = require("jimp");
 const {nanoid} = require("nanoid");
 
 const {User} = require("../models/user");
-const {HttpError, sendEmail} = require("../helpers");
+const {HttpError, sendEmail, cloudinary} = require("../helpers");
 const {ctrlWrapper} = require("../decorators");
 
 const {SECRET_KEY, BASE_URL} = process.env;
 
-const avatarsPath = path.resolve("public", "avatars");
+/// LOCAL_STORAGE ///
+// const avatarsPath = path.resolve("public", "avatars");
 
 const register = async (req, res) => {
     const {email, password} = req.body;
@@ -127,24 +128,35 @@ const logout = async(req, res) => {
 const updateAvatar = async(req, res) => {
     const {_id} = req.user;
     const {path: tempUpload, originalname} = req.file;
-    const filename = `${_id}_${originalname}`;
-    const resultUpload = path.join(avatarsPath, filename);
-    await fs.rename(tempUpload, resultUpload);
-    const avatarURL = path.join("avatars", filename);
-    await User.findByIdAndUpdate(_id, {avatarURL});
 
-    await jimp
-        .read(resultUpload)
+/// LOCAL_STORAGE ///
+    // const filename = `${_id}_${originalname}`;
+    // const resultUpload = path.join(avatarsPath, filename);
+    // await fs.rename(tempUpload, resultUpload);
+    // const avatarURL = path.join("avatars", filename);
+
+await jimp
+        .read(tempUpload)
         .then((avatarURL) => {
             return avatarURL.resize(250, 250)
-            .write(resultUpload);
+            .write(tempUpload);
         })
         .catch((error) => {
             throw error;
         });
-   
+
+
+/// CLOUDINARY_STORAGE ///
+    const fileData = await cloudinary.uploader.upload(tempUpload, {
+        folder: "nodejs-homework-rest-api-avatars"
+    })
+
+    await fs.unlink(tempUpload);
+
+    await User.findByIdAndUpdate(_id, {avatarURL: fileData.url});
+
     res.status(200).json({
-        avatarURL,
+        avatarURL: fileData.url,
     });
 }
 
